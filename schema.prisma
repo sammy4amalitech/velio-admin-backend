@@ -1,0 +1,50 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator db {
+  provider = "go run github.com/steebchen/prisma-client-go"
+}
+
+model Menu {
+  id           Int          @id @default(autoincrement())
+  name         String
+  description  String?
+  price        Float
+  availability Availability
+  ingredients  Ingredient[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model Ingredient {
+  id           Int          @id @default(autoincrement())
+  name         String
+  description  String?
+  Unit         Int
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  Menu         Menu?        @relation(fields: [menuId], references: [id])
+  menuId       Int?
+}
+
+enum Availability {
+  AVAILABLE
+  UNAVAILABLE
+  UNKNOWN
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  DELIVERED
+}
+
+enum PaymentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  REFUNDED
+}
